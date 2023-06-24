@@ -1,92 +1,61 @@
-# Arrow Data Contract
+# Data Contracts
+
+## Context
+
+Assume you have 2 services:
+* Service 1 is responsible for creating a table A
+* Service 2 requires using data from that same table A
+
+You can modify Service 1 to change the format/schema/content of table A, like:
+    * Remove/Add a column
+    * Change the data type of a columns
+        * Change from Integer to String
+    * Change the semantic meaning of a column
+    * Change the constraints on the values of a column
+        * Column uniqueness
+        * Column cannot be empty
+        * Column allowed values
+
+On the other hand, the "requirements" from Service 2 can be more or less strict
+    * It only needs a subset of columns from table A
+    * It requires a subset of the Allowed Values for a column
+        * E.g. Service 2 only cares about properties in the COUNTRY = UK, so if COUNTRY = FRANCE is removed from table A, it doesn't care.
+
+Given the possible scenarios above, a challenge that emerges is with knowing, at time of the MR/PR (merge/pull request), if the incoming changes to one of the Services will cause Service 2's table A expectations to not be met.
+    * Service 1 will remove a column from table A, when that same column is required by Service 2.
+    * Service 2 adds a new expectation of a Column X that is not being produced by Service 1
+
+Additionally, even if "on paper" the two services agree regarding table A, it can happen that during execution, one of the services encounters data that do not match the expectations.
+    * Service 1 says column X cannot be empty, Service 2 expects column X to not be empty, but column X has empty values when retrieved by Service 2. Service 1 may have emitted a Warning, but whether it stops Column X from being propagated is a whole different matter.
+
+## Goal
+
+The goal of Data Contracts is to allow different Services in a System to share their expectations and requirements on Tables, allowing those expectations and requirements to be compared and the system to bring awareness of potentially incompatible expectations from their Services.
+
+One key aspect of achieving this is making sure there is a standardised way of declaring the expectations and requirements that a Service has on a Table.
 
 
+## What is a Data Contract
 
-## Getting started
+A Data Contract is an artifact containing a collection of metadata about a Table. Such table can be a database table, or a "file based" table, like CSV, Excel or Parquet.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+A Data Contract can refer to either an Incoming Table or an Outcoming Table. If the Data Contract refers to an Outcoming Table it can be called a Producer Data Contract. On the other hand, if the Data Contract refers to an Incoming Talbe it can be called a Consumer Data Contract.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+The minimum metadata a Data Contract should contain is a list of columns in a table, alongside their description, data types and basic constraints. It could also contain more information, but those would most likely vary across the different implementations of Data Contracts.
 
-## Add your files
+For a system, there should be a centralised "data contracts catalog", that keeps track of all "producers" and "consumers" of Data Contracts and can perform "compatibility checks" between them.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+In a well designed system, a table should only be "produced" by a single Service, whereas many Services may "consume" it. This leads to the constraint that "no 2 distinct Producer Data Contracts may refer to the same Table".
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/brunomurino/arrow-data-contract.git
-git branch -M main
-git push -uf origin main
-```
+## Data Contract Implementation
 
-## Integrate with your tools
+Data Contracts can be represented in many ways. One way that I particularly like is "metadata only parquet files" where the Metadata comes from an Arrow Schema. The reasons I like this are the following:
 
-- [ ] [Set up project integrations](https://gitlab.com/brunomurino/arrow-data-contract/-/settings/integrations)
+* Arrow is becoming the standard way of manipulating data in a Service, and Arrow is itself a "universal standard" that has implementations in all mainstream programming languages like Python, Java, Rust, Javascript, Go, R, etc.
+    * This means that the Data Contracts are agnostic of what programming language was used to create it.
 
-## Collaborate with your team
+* Arrow Schemas contain not only the list of columns and their types, but also allow the adition of Custom Metadata to both individual Columns and to the whole table.
+    * This Custom Metadata can contain virtually anything. In particular, it can contain Column descriptions, the specification of column tests, etc, and within a System the distinct Services should agree on how to use the Custom Metadata
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+* You can very easily write an Arrow Schema in several languages and save it to a Metadata Only Parquet File
 
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
