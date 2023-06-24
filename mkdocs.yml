@@ -1,7 +1,10 @@
 site_name: Arrow Data Contract
 
+repo_url: https://github.com/brunomurino/arrow-data-contract/
+
 theme:
   name: material
+  custom_dir: overrides
 
 extra:
   version:
