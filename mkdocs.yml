@@ -5,6 +5,10 @@ repo_url: https://github.com/brunomurino/arrow-data-contract/
 theme:
   name: material
   custom_dir: overrides
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.indexes
 
 extra:
   version:

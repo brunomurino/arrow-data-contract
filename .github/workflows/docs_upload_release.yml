@@ -1,9 +1,8 @@
-name: Docs development
+name: Docs Upload Release
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   upload:
@@ -17,6 +16,10 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: "3.10"
+    - name: Set release notes tag
+      run: |
+        export RELEASE_TAG_VERSION=${{ github.event.release.tag_name }}
+        echo "RELEASE_TAG_VERSION=${RELEASE_TAG_VERSION:1}" >> $GITHUB_ENV
     - name: Install and configure Poetry
       uses: snok/install-poetry@v1
       with:
@@ -29,4 +32,5 @@ jobs:
         git config --global user.email docs@dummy.bot.com
     - name: Release docs website and API reference
       run: |
-        poetry run mike deploy --push development
+        poetry run mike deploy --push --update-aliases ${RELEASE_TAG_VERSION} latest
+        poetry run mike set-default --push latest
