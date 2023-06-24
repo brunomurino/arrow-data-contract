@@ -74,7 +74,7 @@ jobs:
         with:
           barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
           lcov-file: "./coverage.lcov"
-          base-lcov-file: "./base_coverage/coverage.lco"
+          base-lcov-file: "./base_coverage/coverage.lcov"
           minimum-ratio: 0 # Fails Github action once code coverage is decreasing
           send-summary-comment: true
           show-annotations: "warning" # Possible options warning|error
