@@ -29,7 +29,8 @@ testpaths = [
 ]
 
 [tool.poe.tasks]
-test = "coverage run -m pytest -vv && coverage lcov"
+test = "coverage run -m pytest -vv"
+coverage = "coverage lcov"
 
 [build-system]
 requires = ["poetry-core"]
