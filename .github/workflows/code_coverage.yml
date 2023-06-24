@@ -63,6 +63,9 @@ jobs:
           poetry run poe test
           poetry run poe coverage
 
+      - name: Display structure of downloaded files
+        run: ls -l
+
       #  Compares two code coverage files and generates report as a comment
       - name: Generate Code Coverage report
         id: code-coverage
