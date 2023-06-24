@@ -1,0 +1,72 @@
+name: Code Coverage
+
+on: [pull_request]
+
+jobs:
+  base_branch_cov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.10"
+
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.5.1
+
+      - name: Install dependencies
+        run: poetry install --with dev
+
+      - name: Run test coverage
+        run: poe test
+
+      - name: Upload code coverage for ref branch
+        uses: actions/upload-artifact@v3
+        with:
+          name: ref-lcov.info
+          path: ./coverage.lcov
+
+  checks:
+    runs-on: ubuntu-latest
+    needs: base_branch_cov
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.10"
+
+      - name: Download code coverage report from base branch
+        uses: actions/download-artifact@v3
+        with:
+          name: ref-lcov.info
+
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.5.1
+
+      - name: Install dependencies
+        run: poetry install --with dev
+
+      - name: Run test coverage
+        run: poe test
+
+      #  Compares two code coverage files and generates report as a comment
+      - name: Generate Code Coverage report
+        id: code-coverage
+        uses: barecheck/code-coverage-action@v1
+        with:
+          barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
+          lcov-file: "./coverage.lcov"
+          base-lcov-file: "./lcov.info"
+          minimum-ratio: 0 # Fails Github action once code coverage is decreasing
+          send-summary-comment: true
+          show-annotations: "warning" # Possible options warning|error
