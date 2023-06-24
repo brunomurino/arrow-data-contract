@@ -3,18 +3,20 @@
 ## Context
 
 Assume you have 2 services:
+
 * Service 1 is responsible for creating a table A
 * Service 2 requires using data from that same table A
 
 You can modify Service 1 to change the format/schema/content of table A, like:
-    * Remove/Add a column
-    * Change the data type of a columns
-        * Change from Integer to String
-    * Change the semantic meaning of a column
-    * Change the constraints on the values of a column
-        * Column uniqueness
-        * Column cannot be empty
-        * Column allowed values
+
+* Remove/Add a column
+* Change the data type of a columns
+    * Change from Integer to String
+* Change the semantic meaning of a column
+* Change the constraints on the values of a column
+    * Column uniqueness
+    * Column cannot be empty
+    * Column allowed values
 
 On the other hand, the "requirements" from Service 2 can be more or less strict
     * It only needs a subset of columns from table A
