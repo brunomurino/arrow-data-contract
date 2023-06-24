@@ -1,5 +1,30 @@
 import pyarrow as pa
 from dataclasses import dataclass
+from typing import Any
+
+from enum import Enum
+
+SchemaTestResult = Enum("SchemaTestResult", ["PASS", "FAIL", "SKIP"])
+
+
+@dataclass
+class FieldCompatibilitySchemaTestResult:
+    name: str
+    consumer_data: Any
+    producer_data: Any
+    result: SchemaTestResult
+
+    def passed(self):
+        return self.result == SchemaTestResult.PASS
+
+
+@dataclass
+class FieldCompatibilityTestsSumary:
+    report: Any
+    result: SchemaTestResult
+
+    def passed(self):
+        return self.result == SchemaTestResult.PASS
 
 
 @dataclass
@@ -7,33 +32,64 @@ class SchemaCompatibility:
     producer_schema: pa.Schema
     consumer_schema: pa.Schema
 
-    def consumer_columns_in_producer(self):
-        columns_in_producer = set(self.producer_schema.names)
-        columns_in_consumer = set(self.consumer_schema.names)
-
-        columns_present_on_consumer_but_not_on_producer = (
-            columns_in_consumer.difference(columns_in_producer)
+    def check_field_in_producer(self, field) -> FieldCompatibilitySchemaTestResult:
+        is_present = field.name in self.producer_schema.names
+        return FieldCompatibilitySchemaTestResult(
+            name="present_in_producer",
+            consumer_data=field.name,
+            producer_data=field.name if is_present else None,
+            result=SchemaTestResult.PASS if is_present else SchemaTestResult.FAIL,
         )
-        # columns_present_on_producer_but_not_on_consumer = (
-        #     columns_in_producer.difference(columns_in_consumer)
-        # )
 
-        if len(columns_present_on_consumer_but_not_on_producer) > 0:
-            print(
-                f"Consumer expects the following columns not found in the Producer: {columns_present_on_consumer_but_not_on_producer}"
-            )
-            # raise Exception(f"Consumer expects the following columns not found in the Producer: {columns_present_on_consumer_but_not_on_producer}")
-            return False
+    def producer_field_match_type(self, field) -> FieldCompatibilitySchemaTestResult:
+        consumer_data = field.type
+        producer_data = None
+        result = SchemaTestResult.SKIP
 
-        return True
+        is_present = field.name in self.producer_schema.names
+        if is_present:
+            producer_data = self.producer_schema.field(field.name).type
+            same_type = consumer_data == producer_data
+            result = SchemaTestResult.PASS if same_type else SchemaTestResult.FAIL
 
-    def compatible(self):
-        self.consumer_columns_in_producer()
+        return FieldCompatibilitySchemaTestResult(
+            name="producer_type_matches",
+            consumer_data=consumer_data,
+            producer_data=producer_data,
+            result=result,
+        )
 
-        if not self.consumer_columns_in_producer():
-            return False
+    def get_field_tests(self, field):
+        all_tests = [
+            self.check_field_in_producer(field),
+            self.producer_field_match_type(field),
+        ]
+        final = {test.name: test for test in all_tests}
+        return final
 
-        return True
-    
-    def foo(self):
-        pass
+    def get_field_tests_summary(self, field) -> FieldCompatibilityTestsSumary:
+        field_tests = self.get_field_tests(field)
+        all_passed = all(test_result.passed() for _, test_result in field_tests.items())
+        return FieldCompatibilityTestsSumary(
+            result=SchemaTestResult.PASS if all_passed else SchemaTestResult.FAIL,
+            report=field_tests,
+        )
+
+    def compatibility_report(self):
+        report = {
+            field.name: self.get_field_tests_summary(field)
+            for field in self.consumer_schema
+        }
+        return report
+
+    def is_compatible(self):
+        report = self.compatibility_report()
+        all_passed = all(
+            field_test_summary.passed() for _, field_test_summary in report.items()
+        )
+
+        result = SchemaTestResult.FAIL
+        if all_passed:
+            result = SchemaTestResult.PASS
+
+        return result, report

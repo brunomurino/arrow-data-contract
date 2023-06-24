@@ -25,12 +25,14 @@ pythonpath = [
   "src",
 ]
 testpaths = [
-    "tests",
+  "tests",
 ]
 
 [tool.poe.tasks]
 test = "coverage run -m pytest -vv"
+lint-fix = "black ."
 coverage = "coverage lcov"
+coverage_html = "coverage html"
 
 [build-system]
 requires = ["poetry-core"]
