@@ -49,6 +49,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ref-lcov.info
+          path: ./coverage/ref-lcov.info
 
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
@@ -64,7 +65,7 @@ jobs:
           poetry run poe coverage
 
       - name: Display structure of downloaded files
-        run: ls -l
+        run: ls -R
 
       #  Compares two code coverage files and generates report as a comment
       - name: Generate Code Coverage report
@@ -73,7 +74,7 @@ jobs:
         with:
           barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
           lcov-file: "./coverage.lcov"
-          base-lcov-file: "./ref-lcov.info"
+          base-lcov-file: "./coverage/ref-lcov.info"
           minimum-ratio: 0 # Fails Github action once code coverage is decreasing
           send-summary-comment: true
           show-annotations: "warning" # Possible options warning|error
