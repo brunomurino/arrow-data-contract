@@ -17,6 +17,7 @@ pytest = "^7.3.2"
 black = "^23.3.0"
 mkdocs-material = "^9.1.17"
 pytest-cov = "^4.1.0"
+mike = "^1.1.2"
 
 [tool.pytest.ini_options]
 pythonpath = [
