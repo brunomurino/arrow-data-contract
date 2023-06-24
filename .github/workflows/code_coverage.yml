@@ -24,7 +24,9 @@ jobs:
         run: poetry install --with dev
 
       - name: Run test coverage
-        run: poetry run poe test
+        run: |
+          poetry run poe test
+          poetry run poe coverage
 
       - name: Upload code coverage for ref branch
         uses: actions/upload-artifact@v3
@@ -57,7 +59,9 @@ jobs:
         run: poetry install --with dev
 
       - name: Run test coverage
-        run: poetry run poe test
+        run: |
+          poetry run poe test
+          poetry run poe coverage
 
       #  Compares two code coverage files and generates report as a comment
       - name: Generate Code Coverage report
