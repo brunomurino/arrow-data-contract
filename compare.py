@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 from dataclasses import dataclass
 
+
 @dataclass
 class DataContractCatalogEntry:
     name: str
@@ -12,9 +13,9 @@ class DataContractCatalogEntry:
 
 Catalog = {
     data_contract_producer.stem: DataContractCatalogEntry(
-        name = data_contract_producer.stem,
-        producer = data_contract_producer,
-        consumers = list(Path(".").glob("**/DATA_CONTRACTS/CONSUMER/*.parquet")),
+        name=data_contract_producer.stem,
+        producer=data_contract_producer,
+        consumers=list(Path(".").glob("**/DATA_CONTRACTS/CONSUMER/*.parquet")),
     )
     for data_contract_producer in Path(".").glob("**/DATA_CONTRACTS/PRODUCER/*.parquet")
 }
@@ -32,7 +33,7 @@ mr_repo_consumer_folderpath = Path(MR_REPO) / "CONSUMER"
 for consumer_filepath in mr_repo_consumer_folderpath.glob("*.parquet"):
     list_of_producers = [
         producer_filepath
-        for producer_filepath in Path('.').glob("**/PRODUCER/*.parquet")
+        for producer_filepath in Path(".").glob("**/PRODUCER/*.parquet")
         if producer_filepath.stem == consumer_filepath.stem
     ]
 

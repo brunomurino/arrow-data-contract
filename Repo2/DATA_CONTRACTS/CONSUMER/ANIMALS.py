@@ -11,19 +11,18 @@ from DataContract import DataContract, Direction
 #     'allowed_values': ["Flamingo"]
 # }
 
-my_schema = pa.schema([
-    # pa.field('n_legs', pa.int64(), metadata={
-    #     b'tests': json.dumps({}).encode('utf-8')
-    # }),
-    pa.field('animals', pa.string(), metadata={
-        b'tests': json.dumps({}).encode('utf-8')
-    })
-],metadata={
-    b'tests': json.dumps([]).encode('utf-8')
-})
+my_schema = pa.schema(
+    [
+        # pa.field('n_legs', pa.int64(), metadata={
+        #     b'tests': json.dumps({}).encode('utf-8')
+        # }),
+        pa.field(
+            "animals", pa.string(), metadata={b"tests": json.dumps({}).encode("utf-8")}
+        )
+    ],
+    metadata={b"tests": json.dumps([]).encode("utf-8")},
+)
 
 data_contract = DataContract(
-    name = "ANIMALS",
-    schema=my_schema,
-    direction=Direction.CONSUMER
+    name="ANIMALS", schema=my_schema, direction=Direction.CONSUMER
 )
