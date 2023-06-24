@@ -37,7 +37,6 @@ class DataContract:
         for _, v in DataContract.instances.items():
             v.to_file()
 
-
     @staticmethod
     def schema_test(tbl, column_name, column_index, test_name, test_value):
         if test_name == 'allowed_values':

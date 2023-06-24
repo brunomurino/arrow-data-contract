@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "arrow-data-contract"
+version = "0.0.1"
+description = ""
+authors = ["Bruno Murino"]
+readme = "README.md"
+packages = [{include = "arrow_data_contract"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyarrow = "^12.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.2"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src",
+]
+testpaths = [
+    "tests",
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
