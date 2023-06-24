@@ -34,3 +34,6 @@ class SchemaCompatibility:
             return False
 
         return True
+    
+    def foo(self):
+        pass
