@@ -108,10 +108,7 @@ class DataContract:
         )
 
     @staticmethod
-    def schema_compatibility(producer_schema, consumer_schema):
-        columns_in_producer = set(producer_schema.names)
-        columns_in_consumer = set(consumer_schema.names)
-
+    def consumer_columns_in_producer(columns_in_producer, columns_in_consumer):
         columns_present_on_consumer_but_not_on_producer = (
             columns_in_consumer.difference(columns_in_producer)
         )
@@ -124,6 +121,18 @@ class DataContract:
                 f"Consumer expects the following columns not found in the Producer: {columns_present_on_consumer_but_not_on_producer}"
             )
             # raise Exception(f"Consumer expects the following columns not found in the Producer: {columns_present_on_consumer_but_not_on_producer}")
+            return False
+
+        return True
+
+    @staticmethod
+    def schema_compatibility(producer_schema, consumer_schema):
+        columns_in_producer = set(producer_schema.names)
+        columns_in_consumer = set(consumer_schema.names)
+
+        if not DataContract.consumer_columns_in_producer(
+            columns_in_producer, columns_in_consumer
+        ):
             return False
 
         return True
