@@ -1,4 +1,4 @@
-# Arrow Data Contract
+# Business Objectives
 
 ## Context
 
@@ -19,16 +19,19 @@ You can modify Service 1 to change the format/schema/content of table A, like:
     * Column allowed values
 
 On the other hand, the "requirements" from Service 2 can be more or less strict
-    * It only needs a subset of columns from table A
-    * It requires a subset of the Allowed Values for a column
-        * E.g. Service 2 only cares about properties in the COUNTRY = UK, so if COUNTRY = FRANCE is removed from table A, it doesn't care.
+
+* It only needs a subset of columns from table A
+* It requires a subset of the Allowed Values for a column
+    * E.g. Service 2 only cares about properties in the COUNTRY = UK, so if COUNTRY = FRANCE is removed from table A, it doesn't care.
 
 Given the possible scenarios above, a challenge that emerges is with knowing, at time of the MR/PR (merge/pull request), if the incoming changes to one of the Services will cause Service 2's table A expectations to not be met.
-    * Service 1 will remove a column from table A, when that same column is required by Service 2.
-    * Service 2 adds a new expectation of a Column X that is not being produced by Service 1
+
+* Service 1 will remove a column from table A, when that same column is required by Service 2.
+* Service 2 adds a new expectation of a Column X that is not being produced by Service 1
 
 Additionally, even if "on paper" the two services agree regarding table A, it can happen that during execution, one of the services encounters data that do not match the expectations.
-    * Service 1 says column X cannot be empty, Service 2 expects column X to not be empty, but column X has empty values when retrieved by Service 2. Service 1 may have emitted a Warning, but whether it stops Column X from being propagated is a whole different matter.
+
+* Service 1 says column X cannot be empty, Service 2 expects column X to not be empty, but column X has empty values when retrieved by Service 2. Service 1 may have emitted a Warning, but whether it stops Column X from being propagated is a whole different matter.
 
 ## Goal
 

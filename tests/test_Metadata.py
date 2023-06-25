@@ -1,15 +1,15 @@
 import pyarrow as pa
-from adc import ADCMetadata
+from adc import Metadata
 import json
 
 
 def test_create_empty_metadata():
-    metadata = ADCMetadata().done()
+    metadata = Metadata().done()
     assert metadata == dict()
 
 
 def test_create_metadata_with_allowed_values_test():
-    metadata = ADCMetadata().add_test_allowed_values(["FOO", "BAR"]).done()
+    metadata = Metadata().add_test_allowed_values(["FOO", "BAR"]).done()
 
     expected_metadata = {
         b"tests": json.dumps({"allowed_values": ["FOO", "BAR"]}).encode("utf-8")
@@ -20,7 +20,7 @@ def test_create_metadata_with_allowed_values_test():
 
 def test_create_metadata_with_allowed_values_and_not_null_test():
     metadata = (
-        ADCMetadata().add_test_allowed_values(["FOO", "BAR"]).add_test_not_null().done()
+        Metadata().add_test_allowed_values(["FOO", "BAR"]).add_test_not_null().done()
     )
 
     expected_metadata = {
@@ -35,12 +35,10 @@ def test_create_metadata_with_allowed_values_and_not_null_test():
     assert metadata == expected_metadata
 
 
-def test_create_schema_with_ADCMetadata():
-    animals_metadata = (
-        ADCMetadata().add_test_allowed_values(["Flamingo", "Horses"]).done()
-    )
+def test_create_schema_with_Metadata():
+    animals_metadata = Metadata().add_test_allowed_values(["Flamingo", "Horses"]).done()
 
-    my_schema = pa.schema(
+    my_schema: pa.Schema = pa.schema(
         [
             pa.field("animals", pa.string(), metadata=animals_metadata),
         ]

@@ -1,15 +1,23 @@
 import pyarrow as pa
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict
 
 from enum import Enum
 
 SchemaTestResult = Enum("SchemaTestResult", ["PASS", "FAIL", "SKIP"])
 
+AvailableFieldTest = Enum(
+    "AvailableFieldTest",
+    [
+        "PRESENT_IN_PRODUCER",
+        "PRODUCER_TYPE_MATCHES",
+    ],
+)
+
 
 @dataclass
 class FieldCompatibilitySchemaTestResult:
-    name: str
+    name: AvailableFieldTest
     consumer_data: Any
     producer_data: Any
     result: SchemaTestResult
@@ -20,7 +28,7 @@ class FieldCompatibilitySchemaTestResult:
 
 @dataclass
 class FieldCompatibilityTestsSumary:
-    report: Any
+    report: Dict[AvailableFieldTest, FieldCompatibilitySchemaTestResult]
     result: SchemaTestResult
 
     def passed(self):
@@ -32,16 +40,20 @@ class SchemaCompatibility:
     producer_schema: pa.Schema
     consumer_schema: pa.Schema
 
-    def check_field_in_producer(self, field) -> FieldCompatibilitySchemaTestResult:
+    def check_field_in_producer(
+        self, field: pa.Field
+    ) -> FieldCompatibilitySchemaTestResult:
         is_present = field.name in self.producer_schema.names
         return FieldCompatibilitySchemaTestResult(
-            name="present_in_producer",
+            name=AvailableFieldTest.PRESENT_IN_PRODUCER,
             consumer_data=field.name,
             producer_data=field.name if is_present else None,
             result=SchemaTestResult.PASS if is_present else SchemaTestResult.FAIL,
         )
 
-    def producer_field_match_type(self, field) -> FieldCompatibilitySchemaTestResult:
+    def producer_field_match_type(
+        self, field: pa.Field
+    ) -> FieldCompatibilitySchemaTestResult:
         consumer_data = field.type
         producer_data = None
         result = SchemaTestResult.SKIP
@@ -53,13 +65,15 @@ class SchemaCompatibility:
             result = SchemaTestResult.PASS if same_type else SchemaTestResult.FAIL
 
         return FieldCompatibilitySchemaTestResult(
-            name="producer_type_matches",
+            name=AvailableFieldTest.PRODUCER_TYPE_MATCHES,
             consumer_data=consumer_data,
             producer_data=producer_data,
             result=result,
         )
 
-    def get_field_tests(self, field):
+    def get_field_tests(
+        self, field: pa.Field
+    ) -> Dict[AvailableFieldTest, FieldCompatibilitySchemaTestResult]:
         all_tests = [
             self.check_field_in_producer(field),
             self.producer_field_match_type(field),
@@ -67,7 +81,7 @@ class SchemaCompatibility:
         final = {test.name: test for test in all_tests}
         return final
 
-    def get_field_tests_summary(self, field) -> FieldCompatibilityTestsSumary:
+    def get_field_tests_summary(self, field: pa.Field) -> FieldCompatibilityTestsSumary:
         field_tests = self.get_field_tests(field)
         all_passed = all(test_result.passed() for _, test_result in field_tests.items())
         return FieldCompatibilityTestsSumary(
@@ -75,7 +89,7 @@ class SchemaCompatibility:
             report=field_tests,
         )
 
-    def compatibility_report(self):
+    def compatibility_report(self) -> Dict[str, FieldCompatibilityTestsSumary]:
         report = {
             field.name: self.get_field_tests_summary(field)
             for field in self.consumer_schema
