@@ -1,6 +1,11 @@
 from pathlib import Path
 import pytest
-from adc import ServiceCatalog, ContractNotFound, DataContract
+from adc import (
+    ServiceCatalog,
+    ContractNotFound,
+    DataContract,
+    ContractAlreadyRegistered,
+)
 
 
 def test_catalog_load():
@@ -12,3 +17,10 @@ def test_catalog_load():
 
     with pytest.raises(ContractNotFound):
         catalog.get("repo_1_contract_2")
+
+
+def test_catalog_load_duplicated():
+    catalog = ServiceCatalog()
+
+    with pytest.raises(ContractAlreadyRegistered):
+        catalog.load(Path("./tests/ServiceCatalog/Repo1_duplicated"))

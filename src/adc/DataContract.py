@@ -25,7 +25,6 @@ class DataContract:
     def __repr__(self):
         return str(self)
 
-
     # @staticmethod
     # def schema_test(tbl, column_name, column_index, test_name, test_value):
     #     if test_name == "allowed_values":

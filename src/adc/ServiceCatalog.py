@@ -7,7 +7,13 @@ from adc import DataContract
 
 class ContractNotFound(Exception):
     def __init__(self, name):
-        message = f"Contract named {name} is not on the catalog"
+        message = f"Contract named {name} is not in the catalog"
+        super().__init__(message)
+
+
+class ContractAlreadyRegistered(Exception):
+    def __init__(self, name):
+        message = f"Contract named {name} already registered to catalog"
         super().__init__(message)
 
 
@@ -26,7 +32,11 @@ class ServiceCatalog:
                 if isinstance(cls, DataContract)
             }
 
-            self.all_contracts.update(data_contracts_in_module)
+            for name, data_contract in data_contracts_in_module.items():
+                if name in self.all_contracts:
+                    raise ContractAlreadyRegistered(name)
+
+                self.all_contracts.update({name: data_contract})
 
     def get(self, name) -> Optional[DataContract]:
         if contract := self.all_contracts.get(name):
