@@ -10,6 +10,8 @@
       
       
       
+        <link rel="next" href="Getting%20Started/">
+      
       <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
@@ -57,7 +59,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#arrow-data-contract" class="md-skip">
+        <a href="#business-objectives" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Arrow Data Contract
+              Business Objectives
             
           </span>
         </div>
@@ -228,12 +230,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Arrow Data Contract
+          Business Objectives
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="." class="md-nav__link md-nav__link--active">
-        Arrow Data Contract
+        Business Objectives
       </a>
       
         
@@ -283,6 +285,36 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Getting%20Started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Roadmap/" class="md-nav__link">
+        Roadmap
+      </a>
     </li>
   
 
@@ -359,7 +391,7 @@
   
 
 
-<h1 id="arrow-data-contract">Arrow Data Contract</h1>
+<h1 id="business-objectives">Business Objectives</h1>
 <h2 id="context">Context</h2>
 <p>Assume you have 2 services:</p>
 <ul>
@@ -381,15 +413,23 @@
 </ul>
 </li>
 </ul>
-<p>On the other hand, the "requirements" from Service 2 can be more or less strict
-    * It only needs a subset of columns from table A
-    * It requires a subset of the Allowed Values for a column
-        * E.g. Service 2 only cares about properties in the COUNTRY = UK, so if COUNTRY = FRANCE is removed from table A, it doesn't care.</p>
-<p>Given the possible scenarios above, a challenge that emerges is with knowing, at time of the MR/PR (merge/pull request), if the incoming changes to one of the Services will cause Service 2's table A expectations to not be met.
-    * Service 1 will remove a column from table A, when that same column is required by Service 2.
-    * Service 2 adds a new expectation of a Column X that is not being produced by Service 1</p>
-<p>Additionally, even if "on paper" the two services agree regarding table A, it can happen that during execution, one of the services encounters data that do not match the expectations.
-    * Service 1 says column X cannot be empty, Service 2 expects column X to not be empty, but column X has empty values when retrieved by Service 2. Service 1 may have emitted a Warning, but whether it stops Column X from being propagated is a whole different matter.</p>
+<p>On the other hand, the "requirements" from Service 2 can be more or less strict</p>
+<ul>
+<li>It only needs a subset of columns from table A</li>
+<li>It requires a subset of the Allowed Values for a column<ul>
+<li>E.g. Service 2 only cares about properties in the COUNTRY = UK, so if COUNTRY = FRANCE is removed from table A, it doesn't care.</li>
+</ul>
+</li>
+</ul>
+<p>Given the possible scenarios above, a challenge that emerges is with knowing, at time of the MR/PR (merge/pull request), if the incoming changes to one of the Services will cause Service 2's table A expectations to not be met.</p>
+<ul>
+<li>Service 1 will remove a column from table A, when that same column is required by Service 2.</li>
+<li>Service 2 adds a new expectation of a Column X that is not being produced by Service 1</li>
+</ul>
+<p>Additionally, even if "on paper" the two services agree regarding table A, it can happen that during execution, one of the services encounters data that do not match the expectations.</p>
+<ul>
+<li>Service 1 says column X cannot be empty, Service 2 expects column X to not be empty, but column X has empty values when retrieved by Service 2. Service 1 may have emitted a Warning, but whether it stops Column X from being propagated is a whole different matter.</li>
+</ul>
 <h2 id="goal">Goal</h2>
 <p>The goal of Data Contracts is to allow different Services in a System to share their expectations and requirements on Tables, allowing those expectations and requirements to be compared and the system to bring awareness of potentially incompatible expectations from their Services.</p>
 <p>One key aspect of achieving this is making sure there is a standardised way of declaring the expectations and requirements that a Service has on a Table.</p>
