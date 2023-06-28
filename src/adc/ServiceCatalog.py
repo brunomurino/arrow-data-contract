@@ -1,8 +1,8 @@
 from pathlib import Path
 import importlib
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
-from adc import DataContract
+from adc import DataContract, Direction
 
 
 class ContractNotFound(Exception):
@@ -42,3 +42,25 @@ class ServiceCatalog:
         if contract := self.all_contracts.get(name):
             return contract
         raise ContractNotFound(name)
+
+    def generate_files(self, base_path) -> List[Path]:
+        all_files = [
+            contract.to_file(base_path) for _, contract in self.all_contracts.items()
+        ]
+        return all_files
+
+    def get_consumers(self) -> Dict[str, DataContract]:
+        result = {
+            name: contract
+            for name, contract in self.all_contracts.items()
+            if contract.direction == Direction.CONSUMER
+        }
+        return result
+
+    def get_producers(self) -> Dict[str, DataContract]:
+        result = {
+            name: contract
+            for name, contract in self.all_contracts.items()
+            if contract.direction == Direction.PRODUCER
+        }
+        return result

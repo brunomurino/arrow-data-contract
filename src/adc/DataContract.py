@@ -1,26 +1,40 @@
+from typing import Optional
 import pyarrow as pa
 import pyarrow.parquet as pq
 from pathlib import Path
-from enum import Enum
+from enum import Enum, auto
 
-Direction = Enum("Direction", ["CONSUMER", "PRODUCER"])
+# Direction = Enum("Direction", ["CONSUMER", "PRODUCER"])
+
+
+class Direction(Enum):
+    CONSUMER = auto()
+    PRODUCER = auto()
+
+    def opposite(self):
+        return Direction.PRODUCER if self == Direction.CONSUMER else Direction.CONSUMER
 
 
 class DataContract:
-    base_path: Path = Path("DATA_CONTRACTS")
-
     def __init__(
         self,
         name: str,
         schema: pa.Schema,
         direction: Direction,
+        origin_service: Optional[str] = None,
     ):
         self.name = name
         self.schema = schema
         self.direction = direction
+        self.origin_service = origin_service
 
     def __str__(self):
-        return f"DataContract({self.name},{self.direction.name})"
+        if self.origin_service:
+            return (
+                f"DataContract({self.name},{self.direction.name},{self.origin_service})"
+            )
+        else:
+            return f"DataContract({self.name},{self.direction.name})"
 
     def __repr__(self):
         return str(self)
@@ -71,22 +85,23 @@ class DataContract:
 
     #     return casted_tbl, table_test_results
 
-    # def to_file(self):
-    #     filepath = DataContract.base_path / self.direction.name / self.name
-    #     filepath.parent.mkdir(exist_ok=True, parents=True)
-    #     pq.write_metadata(self.schema, filepath.with_suffix(".parquet"))
+    def to_file(self, base_path: Path) -> Path:
+        filepath = (base_path / self.direction.name / self.name).with_suffix(".parquet")
+        filepath.parent.mkdir(exist_ok=True, parents=True)
+        pq.write_metadata(self.schema, filepath)
+        return filepath
 
-    # @classmethod
-    # def from_file(cls, name):
-    #     filepath = DataContract.base_path / Direction.CONSUMER.name / name
-    #     file_metadata = pq.read_metadata(filepath.with_suffix(".parquet"))
-    #     arrow_schema = file_metadata.schema.to_arrow_schema()
+    @classmethod
+    def from_file(cls, filepath: Path):
+        file_metadata = pq.read_metadata(filepath)
+        arrow_schema = file_metadata.schema.to_arrow_schema()
 
-    #     return cls(
-    #         name=name,
-    #         schema=arrow_schema,
-    #         direction=Direction.CONSUMER,
-    #     )
+        return cls(
+            name=filepath.stem,
+            schema=arrow_schema,
+            direction=Direction[filepath.parent.name],
+            origin_service=filepath.parent.parent.name,
+        )
 
     # @staticmethod
     # def consumer_columns_in_producer(columns_in_producer, columns_in_consumer):

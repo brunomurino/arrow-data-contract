@@ -2,9 +2,17 @@ import pyarrow as pa
 from dataclasses import dataclass
 from typing import Any, Dict
 
-from enum import Enum
+from enum import Enum, auto
 
-SchemaTestResult = Enum("SchemaTestResult", ["PASS", "FAIL", "SKIP"])
+
+class SchemaTestResult(Enum):
+    PASS = auto()
+    FAIL = auto()
+    SKIP = auto()
+
+    def passed(self):
+        return self == SchemaTestResult.PASS
+
 
 AvailableFieldTest = Enum(
     "AvailableFieldTest",
@@ -22,17 +30,11 @@ class FieldCompatibilitySchemaTestResult:
     producer_data: Any
     result: SchemaTestResult
 
-    def passed(self):
-        return self.result == SchemaTestResult.PASS
-
 
 @dataclass
 class FieldCompatibilityTestsSumary:
     report: Dict[AvailableFieldTest, FieldCompatibilitySchemaTestResult]
     result: SchemaTestResult
-
-    def passed(self):
-        return self.result == SchemaTestResult.PASS
 
 
 @dataclass
@@ -83,7 +85,9 @@ class SchemaCompatibility:
 
     def get_field_tests_summary(self, field: pa.Field) -> FieldCompatibilityTestsSumary:
         field_tests = self.get_field_tests(field)
-        all_passed = all(test_result.passed() for _, test_result in field_tests.items())
+        all_passed = all(
+            test_result.result.passed() for _, test_result in field_tests.items()
+        )
         return FieldCompatibilityTestsSumary(
             result=SchemaTestResult.PASS if all_passed else SchemaTestResult.FAIL,
             report=field_tests,
@@ -99,7 +103,8 @@ class SchemaCompatibility:
     def is_compatible(self):
         report = self.compatibility_report()
         all_passed = all(
-            field_test_summary.passed() for _, field_test_summary in report.items()
+            field_test_summary.result.passed()
+            for _, field_test_summary in report.items()
         )
 
         result = SchemaTestResult.FAIL

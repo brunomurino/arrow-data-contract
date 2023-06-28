@@ -13,8 +13,8 @@ repo_1_contract_1 = DataContract(
     direction=Direction.CONSUMER,
 )
 
-repo_1_contract_2 = DataContract(
-    name="repo_1_contract_2",
+repo_2_contract_1 = DataContract(
+    name="repo_2_contract_1",
     schema=schema,
     direction=Direction.PRODUCER,
 )

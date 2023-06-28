@@ -10,11 +10,5 @@ schema = pa.schema(
 repo_1_contract_1 = DataContract(
     name="repo_1_contract_1",
     schema=schema,
-    direction=Direction.CONSUMER,
-)
-
-repo_1_contract_2 = DataContract(
-    name="repo_1_contract_2",
-    schema=schema,
     direction=Direction.PRODUCER,
 )

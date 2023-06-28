@@ -42,7 +42,7 @@ def test_schema_comparison_check_field_in_producer():
 
     result = schema_compatibility.check_field_in_producer(field)
 
-    assert result.passed()
+    assert result.result.passed()
 
 
 def test_schema_comparison_consumer_columns_not_in_producer():
@@ -64,7 +64,7 @@ def test_schema_comparison_consumer_columns_not_in_producer():
 
     result = schema_compatibility.check_field_in_producer(field)
 
-    assert not result.passed()
+    assert not result.result.passed()
 
 
 def test_schema_comparison_producer_field_match_type():
@@ -84,7 +84,7 @@ def test_schema_comparison_producer_field_match_type():
     schema_compatibility = SchemaCompatibility(producer_schema, consumer_schema)
     field = consumer_schema.field("n_legs")
     result = schema_compatibility.producer_field_match_type(field)
-    assert result.passed()
+    assert result.result.passed()
 
 
 def test_schema_comparison_producer_field_not_match_type():
@@ -104,7 +104,7 @@ def test_schema_comparison_producer_field_not_match_type():
     schema_compatibility = SchemaCompatibility(producer_schema, consumer_schema)
     field = consumer_schema.field("n_legs")
     result = schema_compatibility.producer_field_match_type(field)
-    assert not result.passed()
+    assert not result.result.passed()
 
 
 def test_schema_comparison_producer_field_match_type_skipped():
@@ -145,8 +145,8 @@ def test_schema_comparison_is_not_compatible():
     schema_compatibility = SchemaCompatibility(producer_schema, consumer_schema)
     result, compatibility_report = schema_compatibility.is_compatible()
 
-    assert compatibility_report["n_legs"].passed()
-    assert not compatibility_report["foo"].passed()
+    assert compatibility_report["n_legs"].result.passed()
+    assert not compatibility_report["foo"].result.passed()
 
     assert result == SchemaTestResult.FAIL
 

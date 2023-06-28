@@ -18,3 +18,10 @@ def test_init():
     assert data_contract.schema == my_schema
     assert data_contract.direction == Direction.PRODUCER
     assert repr(data_contract) == "DataContract(test__DataContract__init,PRODUCER)"
+
+
+def test_direction_opposite():
+    my_direction = Direction.CONSUMER
+
+    assert my_direction.opposite() == Direction.PRODUCER
+    assert my_direction.opposite().opposite() == my_direction
