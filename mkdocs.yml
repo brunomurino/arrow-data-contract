@@ -13,3 +13,20 @@ theme:
 extra:
   version:
     provider: mike
+
+plugins:
+- search
+- gen-files:
+    scripts:
+    - docs/gen_ref_pages.py
+- literate-nav:
+    nav_file: SUMMARY.md
+- section-index
+- mkdocstrings
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - Design: design.md
+  - Code Reference: reference/adc/
+  - Roadmap: roadmap.md
