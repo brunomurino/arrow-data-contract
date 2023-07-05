@@ -9,13 +9,17 @@
       
       
       
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../reference/adc/">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
-        <title>Design - Arrow Data Contract</title>
+        <title>Getting Started - Arrow Data Contract</title>
       
     
     
@@ -59,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#design" class="md-skip">
+        <a href="#getting-started" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Design
+              Getting Started
             
           </span>
         </div>
@@ -233,11 +237,21 @@
 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../getting_started/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Getting Started
       </a>
+      
     </li>
   
 
@@ -525,29 +539,8 @@
   
 
 
-<h1 id="design">Design</h1>
-<ul>
-<li>Create Field and Table metadata with class adc.Metadata()</li>
-<li>Create Arrow schema with Field Names and Types, and metadata value coming from class Metadata</li>
-<li>
-<p>Create DataContract giving it a name, a schema and a direction.</p>
-</li>
-<li>
-<p>As part of the CICD pipeline, call <code>adc check</code>.</p>
-<ul>
-<li>This will crawl the directory found in pyproject.toml file or env var X to build the ServiceCatalog object. The ServiceCatalog contains a mapping of all Contract Names found and their corresponding DataContract object</li>
-<li>Will call method <code>generate_files</code> to create all Metadata Only Parquet Files for the Service</li>
-<li>Will connect to the CatalogRepository and fetch all relevant existing DataContracts from other services</li>
-<li>Will run the SchemaCompatibility check between all relevant DataContract and yield a compatibility report for each check</li>
-</ul>
-</li>
-<li>
-<p>If <code>adc check</code> doesn't raise any failures, then call <code>adc upload</code></p>
-<ul>
-<li>Will call method <code>upload_catalog_files</code> of CatalogRepository to replace the existing Service Data Contracts with the new ones coming from the PR/MR.</li>
-</ul>
-</li>
-</ul>
+<h1 id="getting-started">Getting Started</h1>
+<p>On your python project, ha</p>
 
 
 
