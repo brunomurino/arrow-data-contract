@@ -2,42 +2,87 @@ from typing import Optional
 import pyarrow as pa
 import pyarrow.parquet as pq
 from pathlib import Path
-from enum import Enum, auto
-
-# Direction = Enum("Direction", ["CONSUMER", "PRODUCER"])
-
-
-class Direction(Enum):
-    CONSUMER = auto()
-    PRODUCER = auto()
-
-    def opposite(self):
-        return Direction.PRODUCER if self == Direction.CONSUMER else Direction.CONSUMER
-
+import json
+import shutil
+from .metadata import TableMetadata, FieldMetadata, Direction
 
 class DataContract:
+    """
+
+    Examples:
+        >>> my_contract_1 = DataContract(pa.schema([
+        ...         pa.field("n_legs", pa.int64(),metadata=FieldMetadata().add_test_not_null().done()),
+        ...     ],
+        ...     metadata=TableMetadata(name="FOO",direction='CONSUMER').done()
+        ... ))
+        >>> my_contract_1
+        DataContract(FOO,CONSUMER,)
+
+        >>> my_contract_1.field('n_legs')
+        pyarrow.Field<n_legs: int64>
+
+        >>> my_contract_1.field_metadata('n_legs')
+        FieldMetadata(tests={'not_null': True, 'allowed_values': None})
+
+        >>> my_contract_1.to_file(Path("DEMO_DATA_CONTRACTS"))
+        PosixPath('DEMO_DATA_CONTRACTS/CONSUMER/FOO.parquet')
+        
+        >>> my_contract_2 = my_contract_1.from_file(Path('DEMO_DATA_CONTRACTS/CONSUMER/FOO.parquet'))
+        >>> my_contract_2
+        DataContract(FOO,CONSUMER,)
+
+        >>> shutil.rmtree(Path("DEMO_DATA_CONTRACTS"))
+
+        >>> my_contract_1.service = "my_service"
+        >>> my_contract_1.service
+        'my_service'
+        
+
+    """    
     def __init__(
         self,
-        name: str,
         schema: pa.Schema,
-        direction: Direction,
-        origin_service: Optional[str] = None,
     ):
-        self.name = name
         self.schema = schema
-        self.direction = direction
-        self.origin_service = origin_service
+
+    @property
+    def metadata(self) -> TableMetadata:
+        table_metadata = TableMetadata.from_encoded(self.schema.metadata)
+        return table_metadata
+
+    @property
+    def name(self) -> str:
+        return self.metadata.name
+
+    @property
+    def direction(self) -> Direction:
+        return self.metadata.direction
+
+    @property
+    def service(self) -> Optional[str]:
+        return self.metadata.service
+
+    @service.setter
+    def service(self, value: str) -> str:
+        new_metadata = self.metadata
+        new_metadata.service = value
+        new_metadata_encoded = new_metadata.done()
+        new_schema = self.schema.with_metadata(new_metadata_encoded)
+        self.schema = new_schema
+        return value
 
     def __str__(self):
-        if self.origin_service:
-            return (
-                f"DataContract({self.name},{self.direction.name},{self.origin_service})"
-            )
-        else:
-            return f"DataContract({self.name},{self.direction.name})"
+        return f"DataContract({self.name},{self.direction.name},{self.service or ''})"
 
     def __repr__(self):
         return str(self)
+    
+    def field(self, name):
+        return self.schema.field(name)
+    
+    def field_metadata(self, name):
+        field_metadata = FieldMetadata.from_encoded(self.schema.field(name).metadata)
+        return field_metadata
 
     # @staticmethod
     # def schema_test(tbl, column_name, column_index, test_name, test_value):
@@ -95,13 +140,7 @@ class DataContract:
     def from_file(cls, filepath: Path):
         file_metadata = pq.read_metadata(filepath)
         arrow_schema = file_metadata.schema.to_arrow_schema()
-
-        return cls(
-            name=filepath.stem,
-            schema=arrow_schema,
-            direction=Direction[filepath.parent.name],
-            origin_service=filepath.parent.parent.name,
-        )
+        return cls(arrow_schema)
 
     # @staticmethod
     # def consumer_columns_in_producer(columns_in_producer, columns_in_consumer):

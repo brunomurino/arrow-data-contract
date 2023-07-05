@@ -8,7 +8,7 @@ from adc import (
 
 
 def test_catalog_fetch_direction():
-    catalog = ServiceCatalog()
+    catalog = ServiceCatalog("repo_1")
     catalog.load(Path("./tests/ServiceCatalog/Repo1"))
 
     all_consumer_contracts = catalog.get_consumers()

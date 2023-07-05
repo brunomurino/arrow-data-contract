@@ -1,23 +1,24 @@
 from pathlib import Path
 import shutil
 from typing import List, Protocol, Dict
-from adc import DataContract, ServiceCatalog
 
-from adc.DataContract import Direction
+from .data_contract import DataContract, Direction
+from .service_catalog import ServiceCatalog
+
 
 
 class CatalogRepositoryBackend(Protocol):
     def get_complete_path(self, service_name: str, catalog_filepath: Path) -> Path:
-        pass
+        ...
 
     def upload_file(self, service_name: str, local_filepath: Path) -> Path:
-        pass
+        ...
 
     def list_files(self, glob_to_search: str) -> List[Path]:
-        pass
+        ...
 
     def get_file(self, filepath: Path, target_base_path: Path) -> Path:
-        pass
+        ...
 
 
 class CatalogRepositoryBackendLocal:
@@ -63,9 +64,6 @@ class CatalogRepository:
         ]
         return repository_filepaths
 
-    def find_contract_with_name(self, name):
-        pass
-
     def verify_matches(
         self, searched_direction: Direction, list_of_matches_found: List[Path]
     ) -> None:
@@ -94,7 +92,7 @@ class CatalogRepository:
                     self.backend.get_file(match_found, staging_path)
                 ),
             }
-            for requested_contract_name, contract in service_catalog.all_contracts.items()
+            for requested_contract_name, contract in service_catalog.contracts.items()
             for match_found in self.find_relevant_contracts(
                 contract.direction.opposite(), requested_contract_name
             )

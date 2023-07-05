@@ -10,7 +10,7 @@ import shutil
 
 
 def test_upload_repo_1():
-    catalog = ServiceCatalog()
+    catalog = ServiceCatalog("repo_1")
     catalog.load(Path("./tests/CatalogRepository/Repo1"))
     catalog_base_path = Path(str(uuid.uuid4()))
 

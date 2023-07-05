@@ -1,8 +1,8 @@
 # pyright: reportUnusedImport=false
 
-from .DataContract import DataContract, Direction
-from .Metadata import Metadata
-from .ServiceCatalog import ServiceCatalog, ContractNotFound, ContractAlreadyRegistered
-from .SchemaCompatibility import SchemaCompatibility, SchemaTestResult
-from .CatalogRepository import CatalogRepository, CatalogRepositoryBackendLocal
-from .DataContractCompatibility import DataContractCompatibility
+from .data_contract import DataContract
+from .metadata import Direction, TableMetadata, FieldMetadata, FieldTestMetadata
+from .service_catalog import ServiceCatalog, ContractNotFound, ContractAlreadyRegistered
+from .schema_compatibility import SchemaCompatibility, SchemaTestResult
+from .catalog_repository import CatalogRepository, CatalogRepositoryBackendLocal
+from .data_contract_compatibility import DataContractCompatibility

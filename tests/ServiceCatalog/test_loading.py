@@ -11,10 +11,10 @@ from adc import (
 
 
 def test_catalog_load():
-    catalog = ServiceCatalog()
+    catalog = ServiceCatalog("repo_1")
     catalog.load(Path("./tests/ServiceCatalog/Repo1"))
 
-    assert len(catalog.all_contracts) == 2
+    assert len(catalog.contracts) == 2
     assert isinstance(catalog.get("repo_1_contract_1"), DataContract)
 
     with pytest.raises(ContractNotFound):
@@ -22,13 +22,13 @@ def test_catalog_load():
 
 
 def test_catalog_load_duplicated():
-    catalog = ServiceCatalog()
+    catalog = ServiceCatalog("repo_1")
     with pytest.raises(ContractAlreadyRegistered):
         catalog.load(Path("./tests/ServiceCatalog/Repo1_duplicated"))
 
 
 def test_catalog_generate_files():
-    catalog = ServiceCatalog()
+    catalog = ServiceCatalog("repo_1")
     catalog.load(Path("./tests/ServiceCatalog/Repo1"))
     base_path = Path(str(uuid.uuid4()))
     catalog_files = catalog.generate_files(base_path)

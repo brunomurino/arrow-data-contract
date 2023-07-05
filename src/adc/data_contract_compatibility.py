@@ -1,20 +1,12 @@
 from dataclasses import dataclass
 from typing import Any
-from adc import DataContract, SchemaCompatibility, Direction
+from .data_contract import DataContract, Direction
+from .schema_compatibility import SchemaCompatibility
 
 
 class DataContractCompatibility:
     def __init__(self, res: Any):
         self.res = res
-
-    # producer_data_contract: DataContract
-    # consumer_data_contract: DataContract
-
-    # def run(self):
-    #     return SchemaCompatibility(
-    #         self.producer_data_contract.schema,
-    #         self.consumer_data_contract.schema,
-    #     ).compatibility_report()
 
     def run(self):
         for check in self.res:
