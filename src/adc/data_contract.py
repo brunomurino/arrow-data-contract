@@ -6,6 +6,7 @@ import json
 import shutil
 from .metadata import TableMetadata, FieldMetadata, Direction
 
+
 class DataContract:
     """
 
@@ -22,11 +23,11 @@ class DataContract:
         pyarrow.Field<n_legs: int64>
 
         >>> my_contract_1.field_metadata('n_legs')
-        FieldMetadata(tests={'not_null': True, 'allowed_values': None})
+        FieldMetadata(tests=FieldTestMetadata(not_null=True, allowed_values=None))
 
         >>> my_contract_1.to_file(Path("DEMO_DATA_CONTRACTS"))
         PosixPath('DEMO_DATA_CONTRACTS/CONSUMER/FOO.parquet')
-        
+
         >>> my_contract_2 = my_contract_1.from_file(Path('DEMO_DATA_CONTRACTS/CONSUMER/FOO.parquet'))
         >>> my_contract_2
         DataContract(FOO,CONSUMER,)
@@ -36,9 +37,10 @@ class DataContract:
         >>> my_contract_1.service = "my_service"
         >>> my_contract_1.service
         'my_service'
-        
 
-    """    
+
+    """
+
     def __init__(
         self,
         schema: pa.Schema,
@@ -76,10 +78,10 @@ class DataContract:
 
     def __repr__(self):
         return str(self)
-    
+
     def field(self, name):
         return self.schema.field(name)
-    
+
     def field_metadata(self, name):
         field_metadata = FieldMetadata.from_encoded(self.schema.field(name).metadata)
         return field_metadata

@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+
 class Direction(str, Enum):
     """
     Examples:
@@ -15,8 +16,8 @@ class Direction(str, Enum):
 
     """
 
-    CONSUMER = 'CONSUMER'
-    PRODUCER = 'PRODUCER'
+    CONSUMER = "CONSUMER"
+    PRODUCER = "PRODUCER"
 
     def opposite(self):
         return Direction.PRODUCER if self == Direction.CONSUMER else Direction.CONSUMER

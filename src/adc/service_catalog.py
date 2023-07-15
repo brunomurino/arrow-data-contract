@@ -17,6 +17,7 @@ class ContractAlreadyRegistered(Exception):
         message = f"Contract named {name} already registered to catalog"
         super().__init__(message)
 
+
 class ContractServiceDoesntMatchServiceCatalogName(Exception):
     def __init__(self, name, service_name, service_catalog_name):
         message = f"Contract named {name} with 'service' = '{service_name}' is trying to be added to service catalog named '{service_catalog_name}'."
@@ -52,27 +53,28 @@ class ServiceCatalog:
 
 
     """
+
     def __init__(self, name: str):
         self.name = name
         self.contracts: Dict[str, DataContract] = dict()
 
     def __repr__(self):
         return f"ServiceCatalog('{self.name}')"
-    
-    def add_contract(self, contract: DataContract) -> None:
 
+    def add_contract(self, contract: DataContract) -> None:
         contract_name = contract.name
 
         if contract_name in self.contracts:
             raise ContractAlreadyRegistered(contract_name)
-        
+
         if contract.service and contract.service != self.name:
-            raise ContractServiceDoesntMatchServiceCatalogName(contract_name, contract.service, self.name)
+            raise ContractServiceDoesntMatchServiceCatalogName(
+                contract_name, contract.service, self.name
+            )
         else:
             contract.service = self.name
 
         self.contracts.update({contract_name: contract})
-
 
     def load(self, path: Path):
         for python_file in path.glob("**/*.py"):
@@ -87,7 +89,6 @@ class ServiceCatalog:
 
             for data_contract in data_contracts_in_module:
                 self.add_contract(data_contract)
-
 
     def get(self, name) -> Optional[DataContract]:
         if contract := self.contracts.get(name):

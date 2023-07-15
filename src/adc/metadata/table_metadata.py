@@ -1,11 +1,10 @@
-
-
 import attrs
 from attrs import define, field
 from typing import Optional
 from typing_extensions import Self
 from .direction import Direction
 import json
+
 
 def _direction_converter(x):
     # if not x:
@@ -26,8 +25,9 @@ class TableMetadata:
 
         >>> TableMetadata(name="FOO", direction='CONSUMER').direction
         CONSUMER
-    
+
     """
+
     name: str
     direction: Direction = field(converter=_direction_converter)
     service: Optional[str] = None
@@ -42,6 +42,6 @@ class TableMetadata:
     def from_encoded(cls, encoded_metadata) -> Self:
         raw_dict = {
             k.decode("utf-8"): json.loads(v.decode("utf-8"))
-            for k,v in encoded_metadata.items()
+            for k, v in encoded_metadata.items()
         }
         return cls(**raw_dict)

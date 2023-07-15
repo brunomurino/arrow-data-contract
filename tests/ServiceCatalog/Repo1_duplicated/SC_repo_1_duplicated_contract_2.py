@@ -8,7 +8,7 @@ schema = pa.schema(
     metadata=TableMetadata(
         name="repo_1_duplicated_contract_1",
         direction=Direction.CONSUMER,
-    ).done()
+    ).done(),
 )
 
 repo_1_duplicated_contract_1 = DataContract(schema)
