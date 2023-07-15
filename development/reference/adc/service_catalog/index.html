@@ -12,7 +12,7 @@
         <link rel="prev" href="../schema_compatibility/">
       
       
-        <link rel="next" href="../metadata/">
+        <link rel="next" href="../catalog/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
@@ -289,6 +289,8 @@
           
         
           
+            
+          
         
           
             
@@ -313,20 +315,6 @@
           Code Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../catalog_repository/" class="md-nav__link">
-        Catalog repository
-      </a>
-    </li>
-  
-
-            
           
             
               
@@ -423,6 +411,96 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../catalog/">Catalog</a>
+          
+            <label for="__nav_4_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Catalog
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/catalog_repository/" class="md-nav__link">
+        Catalog repository
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/catalog_repository_backend_local/" class="md-nav__link">
+        Catalog repository backend local
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/catalog_repository_entry/" class="md-nav__link">
+        Catalog repository entry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -656,8 +734,7 @@
 
         <details class="quote">
           <summary>Source code in <code>src/adc/service_catalog.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 26</span>
-<span class="normal"> 27</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
 <span class="normal"> 30</span>
@@ -747,7 +824,8 @@
 <span class="normal">114</span>
 <span class="normal">115</span>
 <span class="normal">116</span>
-<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ServiceCatalog</span><span class="p">:</span>
+<span class="normal">117</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ServiceCatalog</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Examples:</span>
@@ -776,6 +854,7 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contracts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataContract</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -784,19 +863,19 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ServiceCatalog(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
 
     <span class="k">def</span> <span class="nf">add_contract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">DataContract</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="n">contract_name</span> <span class="o">=</span> <span class="n">contract</span><span class="o">.</span><span class="n">name</span>
 
         <span class="k">if</span> <span class="n">contract_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contracts</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ContractAlreadyRegistered</span><span class="p">(</span><span class="n">contract_name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">contract</span><span class="o">.</span><span class="n">service</span> <span class="ow">and</span> <span class="n">contract</span><span class="o">.</span><span class="n">service</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ContractServiceDoesntMatchServiceCatalogName</span><span class="p">(</span><span class="n">contract_name</span><span class="p">,</span> <span class="n">contract</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ContractServiceDoesntMatchServiceCatalogName</span><span class="p">(</span>
+                <span class="n">contract_name</span><span class="p">,</span> <span class="n">contract</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">contract</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">contracts</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">contract_name</span><span class="p">:</span> <span class="n">contract</span><span class="p">})</span>
-
 
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">python_file</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*.py&quot;</span><span class="p">):</span>
@@ -811,7 +890,6 @@
 
             <span class="k">for</span> <span class="n">data_contract</span> <span class="ow">in</span> <span class="n">data_contracts_in_module</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_contract</span><span class="p">(</span><span class="n">data_contract</span><span class="p">)</span>
-
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataContract</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">contract</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contracts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>

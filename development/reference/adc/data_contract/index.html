@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../catalog_repository/">
+        <link rel="prev" href="../">
       
       
         <link rel="next" href="../data_contract_compatibility/">
@@ -289,6 +289,8 @@
           
         
           
+            
+          
         
           
             
@@ -313,20 +315,6 @@
           Code Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../catalog_repository/" class="md-nav__link">
-        Catalog repository
-      </a>
-    </li>
-  
-
-            
           
             
               
@@ -423,6 +411,96 @@
       <a href="../service_catalog/" class="md-nav__link">
         Service catalog
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../catalog/">Catalog</a>
+          
+            <label for="__nav_4_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Catalog
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/catalog_repository/" class="md-nav__link">
+        Catalog repository
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/catalog_repository_backend_local/" class="md-nav__link">
+        Catalog repository backend local
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/catalog_repository_entry/" class="md-nav__link">
+        Catalog repository entry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -642,7 +720,7 @@
 <span class="go">pyarrow.Field&lt;n_legs: int64&gt;</span>
 </code></pre></div>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_contract_1</span><span class="o">.</span><span class="n">field_metadata</span><span class="p">(</span><span class="s1">&#39;n_legs&#39;</span><span class="p">)</span>
-<span class="go">FieldMetadata(tests={&#39;not_null&#39;: True, &#39;allowed_values&#39;: None})</span>
+<span class="go">FieldMetadata(tests=FieldTestMetadata(not_null=True, allowed_values=None))</span>
 </code></pre></div>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_contract_1</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;DEMO_DATA_CONTRACTS&quot;</span><span class="p">))</span>
 <span class="go">PosixPath(&#39;DEMO_DATA_CONTRACTS/CONSUMER/FOO.parquet&#39;)</span>
@@ -661,8 +739,7 @@
 
         <details class="quote">
           <summary>Source code in <code>src/adc/data_contract.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  9</span>
-<span class="normal"> 10</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 10</span>
 <span class="normal"> 11</span>
 <span class="normal"> 12</span>
 <span class="normal"> 13</span>
@@ -795,7 +872,9 @@
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
-<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DataContract</span><span class="p">:</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DataContract</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Examples:</span>
@@ -811,7 +890,7 @@
 <span class="sd">        pyarrow.Field&lt;n_legs: int64&gt;</span>
 
 <span class="sd">        &gt;&gt;&gt; my_contract_1.field_metadata(&#39;n_legs&#39;)</span>
-<span class="sd">        FieldMetadata(tests={&#39;not_null&#39;: True, &#39;allowed_values&#39;: None})</span>
+<span class="sd">        FieldMetadata(tests=FieldTestMetadata(not_null=True, allowed_values=None))</span>
 
 <span class="sd">        &gt;&gt;&gt; my_contract_1.to_file(Path(&quot;DEMO_DATA_CONTRACTS&quot;))</span>
 <span class="sd">        PosixPath(&#39;DEMO_DATA_CONTRACTS/CONSUMER/FOO.parquet&#39;)</span>
@@ -827,7 +906,8 @@
 <span class="sd">        &#39;my_service&#39;</span>
 
 
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">schema</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Schema</span><span class="p">,</span>
